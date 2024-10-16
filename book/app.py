@@ -12,6 +12,7 @@ class CustomUnpickler(pickle.Unpickler):
             return _unpickle_block
         return super().find_class(module, name)
 
+# Load the trained model and data files using the custom unpickler
 with open('model.pkl', 'rb') as f:
     model = pickle.load(f)
 
