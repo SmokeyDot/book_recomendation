@@ -1,29 +1,17 @@
+import pandas as pd
 from flask import Flask, request, jsonify, render_template
-import pickle
 import numpy as np
+import pickle
 
 app = Flask(__name__)
 
-# Custom unpickler to handle '_unpickle_block' attribute
-class CustomUnpickler(pickle.Unpickler):
-    def find_class(self, module, name):
-        if module == 'pandas._libs.internals' and name == '_unpickle_block':
-            from pandas.core.internals.blocks import _unpickle_block
-            return _unpickle_block
-        return super().find_class(module, name)
+# Load data from CSV instead of pickle
+final_rating = pd.read_csv('final_rating.csv')
 
-# Load the trained model and data files using the custom unpickler
-with open('model.pkl', 'rb') as f:
-    model = pickle.load(f)
-
-with open('book_names.pkl', 'rb') as f:
-    book_names = pickle.load(f)
-
-with open('final_rating.pkl', 'rb') as f:
-    final_rating = CustomUnpickler(f).load()
-
-with open('book_pivot.pkl', 'rb') as f:
-    book_pivot = pickle.load(f)
+# Load the rest of your pickles
+model = pickle.load(open('model.pkl', 'rb'))
+book_names = pickle.load(open('book_names.pkl', 'rb'))
+book_pivot = pickle.load(open('book_pivot.pkl', 'rb'))
 
 def fetch_poster(suggestion):
     book_name = []
